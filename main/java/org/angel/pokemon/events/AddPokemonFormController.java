@@ -9,6 +9,7 @@ import org.angel.pokemon.model.PokemonType;
 
 import javax.swing.*;
 import java.sql.SQLException;
+import java.util.List;
 
 public class AddPokemonFormController {
     private JFrame addPokemonForm;
@@ -16,56 +17,48 @@ public class AddPokemonFormController {
     private JTextField pokemonHeightField;
     private JTextField pokemonWeightField;
     private JTextField pokemonBaseExperienceField;
-    private JTextField pokemonTypeField;
+    private JComboBox<PokemonType> comboType;
     private PokemonDAO pokemonDAO;
 
-    public AddPokemonFormController(JFrame addPokemonForm, JTextField pokemonNameField, JTextField pokemonHeightField,
-                                    JTextField pokemonWeightField, JTextField pokemonBaseExperienceField,
-                                    JTextField pokemonTypeField) {
+    public AddPokemonFormController(JFrame addPokemonForm, JTextField pokemonNameField, JTextField pokemonHeightField, JTextField pokemonWeightField, JTextField pokemonBaseExperienceField, JComboBox<PokemonType> comboType) {
         this.addPokemonForm = addPokemonForm;
         this.pokemonNameField = pokemonNameField;
         this.pokemonHeightField = pokemonHeightField;
         this.pokemonWeightField = pokemonWeightField;
         this.pokemonBaseExperienceField = pokemonBaseExperienceField;
-        this.pokemonTypeField = pokemonTypeField;
+        this.comboType = comboType;
         this.pokemonDAO = new PokemonDAOImp();
     }
 
-    public void addPokemon(){
+    public void addPokemon() throws SQLException{
         Pokemon pokemon = null;
+        pokemon = convertoToPokemon();
+        pokemonDAO.create(pokemon);
+    }
+
+    public void fillComboBox() {
+        PokemonTypeDAO pokemonTypeDAO = new PokemonTypeDAOImp();
+        List<PokemonType> pokemonTypeList;
         try {
-            pokemon = convertoToPokemon();
-            pokemonDAO.create(pokemon);
-            JOptionPane.showMessageDialog(addPokemonForm, "El registro fue añadido exitosamente.");
+            pokemonTypeList = pokemonTypeDAO.readAll();
+            for (PokemonType type: pokemonTypeList){
+                comboType.addItem(type);
+            }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(addPokemonForm, "Error al añadir el registro");
+            JOptionPane.showMessageDialog(addPokemonForm, "Error al consultar los tipos de pokemon");
         }
-        addPokemonForm.dispose();
-    }
 
-    public void cancel(){
-        addPokemonForm.dispose();
     }
-
+    
     private Pokemon convertoToPokemon(){
         Pokemon pokemon = new Pokemon();
+        PokemonType type = (PokemonType)comboType.getSelectedItem();
         pokemon.setName(pokemonNameField.getText());
         pokemon.setHeight(Float.parseFloat(pokemonHeightField.getText()));
         pokemon.setWeight(Float.parseFloat(pokemonWeightField.getText()));
         pokemon.setBaseExperience(Integer.parseInt(pokemonBaseExperienceField.getText()));
-        pokemon.setType(searchPokemonType());
+        pokemon.setType(type);
 
         return pokemon;
-    }
-
-    private PokemonType searchPokemonType(){
-        PokemonTypeDAO pokemonTypeDAO = new PokemonTypeDAOImp();
-        PokemonType pokemonType = null;
-        try {
-            pokemonType = pokemonTypeDAO.read(Integer.valueOf(pokemonTypeField.getText()));
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(addPokemonForm, "El tipo de pokemon no existe");
-        }
-        return pokemonType;
     }
 }

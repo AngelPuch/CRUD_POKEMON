@@ -50,13 +50,4 @@ public class Pokemon implements Serializable {
     public String toString(){
         return name;
     }
-    /*@Override
-    public String toString() {
-        return "Pokemon id = " + id +
-                ", name = " + name +
-                ", height = " + height +
-                ", weight = " + weight +
-                ", baseExperience = " + baseExperience +
-                type.toString();
-    }*/
 }

@@ -1,5 +1,6 @@
 package org.angel.pokemon.model;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class PokemonType implements Serializable {
     private int id;
@@ -7,6 +8,7 @@ public class PokemonType implements Serializable {
 
     public PokemonType() {
     }
+
 
     public PokemonType(int id, String typeName) {
         this.id = id;
@@ -26,7 +28,19 @@ public class PokemonType implements Serializable {
 
     @Override
     public String toString() {
-        return ", Type id = " + id +
-                ", typeName = " + typeName;
+        return typeName;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        PokemonType that = (PokemonType) object;
+        return Objects.equals(typeName, that.typeName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(typeName);
     }
 }

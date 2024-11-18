@@ -1,16 +1,18 @@
 package org.angel.pokemon.gui;
 
 import org.angel.pokemon.events.AddPokemonFormController;
+import org.angel.pokemon.model.PokemonType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class AddPokemonForm extends JFrame{
     private JTextField pokemonNameField;
     private JTextField pokemonHeightField;
     private JTextField pokemonWeightField;
     private JTextField pokemonBaseExperienceField;
-    private JTextField pokemonTypeField;
+    private JComboBox<PokemonType> comboType;
     private AddPokemonFormController controller;
 
     public AddPokemonForm(){
@@ -20,7 +22,8 @@ public class AddPokemonForm extends JFrame{
         setLocationRelativeTo(null);
         initComponent();
         this.controller = new AddPokemonFormController(this, pokemonNameField, pokemonHeightField,
-                pokemonWeightField, pokemonBaseExperienceField, pokemonTypeField);
+                pokemonWeightField, pokemonBaseExperienceField, comboType);
+        controller.fillComboBox();
         setVisible(true);
 
     }
@@ -32,7 +35,7 @@ public class AddPokemonForm extends JFrame{
         pokemonHeightField = new JTextField();
         pokemonWeightField = new JTextField();
         pokemonBaseExperienceField = new JTextField();
-        pokemonTypeField = new JTextField();
+        comboType = new JComboBox<>();
 
         formPanel.add(new JLabel("Nombre: "));
         formPanel.add(pokemonNameField);
@@ -47,7 +50,8 @@ public class AddPokemonForm extends JFrame{
         formPanel.add(pokemonBaseExperienceField);
 
         formPanel.add(new JLabel("Tipo: "));
-        formPanel.add(pokemonTypeField);
+        formPanel.add(comboType);
+
 
         JPanel buttonPanel = new JPanel();
         JButton addButton = new JButton("Añadir");
@@ -59,8 +63,18 @@ public class AddPokemonForm extends JFrame{
         add(formPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        addButton.addActionListener(e -> controller.addPokemon());
-        cancelButton.addActionListener(e -> controller.cancel());
+        addButton.addActionListener(e -> {
+            try {
+                controller.addPokemon();
+                JOptionPane.showMessageDialog(this, "El registro fue añadido exitosamente.");
+                dispose();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Error al añadir el registro");
+            }
+        });
+        cancelButton.addActionListener(e -> {
+            dispose();
+        });
 
     }
 }

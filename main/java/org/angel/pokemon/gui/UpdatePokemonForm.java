@@ -1,18 +1,19 @@
 package org.angel.pokemon.gui;
 
-import org.angel.pokemon.events.AddPokemonFormController;
 import org.angel.pokemon.events.UpdatePokemonFormController;
 import org.angel.pokemon.model.Pokemon;
+import org.angel.pokemon.model.PokemonType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class UpdatePokemonForm extends JFrame {
     private JTextField pokemonNameField;
     private JTextField pokemonHeightField;
     private JTextField pokemonWeightField;
     private JTextField pokemonBaseExperienceField;
-    private JTextField pokemonTypeField;
+    private JComboBox<PokemonType> comboType;
     private Pokemon pokemon;
     private UpdatePokemonFormController controller;
 
@@ -24,7 +25,8 @@ public class UpdatePokemonForm extends JFrame {
         setLocationRelativeTo(null);
         initComponent();
         this.controller = new UpdatePokemonFormController(this, pokemonNameField, pokemonHeightField,
-                pokemonWeightField, pokemonBaseExperienceField, pokemonTypeField, pokemon);
+                pokemonWeightField, pokemonBaseExperienceField, comboType, pokemon);
+        controller.fillComboBox();
         setVisible(true);
 
     }
@@ -36,7 +38,7 @@ public class UpdatePokemonForm extends JFrame {
         pokemonHeightField = new JTextField(String.valueOf(pokemon.getHeight()));
         pokemonWeightField = new JTextField(String.valueOf(pokemon.getWeight()));
         pokemonBaseExperienceField = new JTextField(String.valueOf(pokemon.getBaseExperience()));
-        pokemonTypeField = new JTextField(String.valueOf(pokemon.getType().getId()));
+        comboType = new JComboBox<>();
 
         formPanel.add(new JLabel("Nombre: "));
         formPanel.add(pokemonNameField);
@@ -51,7 +53,7 @@ public class UpdatePokemonForm extends JFrame {
         formPanel.add(pokemonBaseExperienceField);
 
         formPanel.add(new JLabel("Tipo: "));
-        formPanel.add(pokemonTypeField);
+        formPanel.add(comboType);
 
         JPanel buttonPanel = new JPanel();
         JButton updateButton = new JButton("Actualizar");
@@ -63,8 +65,18 @@ public class UpdatePokemonForm extends JFrame {
         add(formPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        updateButton.addActionListener(e -> controller.updatePokemon());
-        cancelButton.addActionListener(e -> controller.cancel());
+        updateButton.addActionListener(e -> {
+            try {
+                controller.updatePokemon();
+                JOptionPane.showMessageDialog(this, "El registro fue actualizado exitosamente.");
+                dispose();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo actualizar el registro");
+            }
+        });
+        cancelButton.addActionListener(e -> {
+            dispose();
+        });
 
     }
 

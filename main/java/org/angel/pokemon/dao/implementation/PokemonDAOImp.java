@@ -31,7 +31,8 @@ public class PokemonDAOImp implements PokemonDAO {
     @Override
     public Pokemon read(Integer id) throws SQLException {
         Pokemon pokemon = null;
-        String query = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+        String query = "SELECT pokemon.id, name, height, weight, base_experience, type_id, type_name " +
+                "FROM pokemon INNER JOIN pokemontype ON pokemon.type_id = pokemontype.id WHERE pokemon.id = ?";
 
         Connection conn = DatabaseConnection.getInstance().getConnection();
         PreparedStatement ps = conn.prepareStatement(query);
@@ -68,8 +69,8 @@ public class PokemonDAOImp implements PokemonDAO {
     @Override
     public List<Pokemon> readAll() throws SQLException {
         List<Pokemon> pokemonList = new ArrayList<>();
-        String query = "SELECT pokemon.id, name, height ,weight, base_experience, type_id, type_name " +
-                "FROM pokemon INNER JOIN pokemontype " + "WHERE type_id = pokemontype.id " + "ORDER BY pokemon.id";
+        String query = "SELECT pokemon.id, name, height, weight, base_experience, type_id, type_name " +
+                "FROM pokemon INNER JOIN pokemontype ON pokemon.type_id = pokemontype.id ";
 
         Connection conn = DatabaseConnection.getInstance().getConnection();
         PreparedStatement ps = conn.prepareStatement(query);
